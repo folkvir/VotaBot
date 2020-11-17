@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const config = require("./botconfig.json");
+const config = require("./botconfig.js");
 const Poll = require("./poll.js");
 const Datastore = require('nedb');
 
@@ -37,7 +37,9 @@ const examplesEmbed = new Discord.RichEmbed()
 	.setColor("#DDA0DD");
 
 
-let database = new Datastore('database.db');
+let database = new Datastore({
+	inMemoryOnly: true
+});
 database.loadDatabase();
 database.persistence.setAutocompactionInterval(3600000);
 
@@ -227,6 +229,10 @@ client.on("message", async (msg) => {
 							msg.reply("The link is not available in this moment.");
 						}
 						break;
+					case "clean":
+						cleanDatabase()
+						msg.reply('You successfully clean the database.')
+						break
 					default:
 						if (!isDM) {
 							poll(msg, args);
@@ -242,4 +248,7 @@ client.on("message", async (msg) => {
 
 client.on("error", console.error);
 
-client.login(config.token).then((token) => console.log("Logged in successfully")).catch(console.error);
+client.login(config.token).then((token) => console.log("Logged in successfully")).catch(error => {
+	console.error(error)
+	process.exit(1)
+});
