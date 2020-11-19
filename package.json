@@ -12,6 +12,7 @@
   "dependencies": {
     "discord.js": "^11.4.2",
     "nedb": "^1.8.0",
-    "string-hash": "^1.1.3"
+    "string-hash": "^1.1.3",
+    "express": "*"
   }
 }

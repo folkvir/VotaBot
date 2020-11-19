@@ -4,4 +4,6 @@ COPY . /code
 
 RUN cd /code && npm install --production
 
-ENTRYPOINT ["node", "/code/index.js"]
+WORKDIR /code
+
+ENTRYPOINT ["node", "index.js"]

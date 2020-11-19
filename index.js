@@ -2,6 +2,8 @@ const Discord = require("discord.js");
 const config = require("./botconfig.js");
 const Poll = require("./poll.js");
 const Datastore = require('nedb');
+const express = require('express')
+
 
 const client = new Discord.Client();
 
@@ -248,7 +250,15 @@ client.on("message", async (msg) => {
 
 client.on("error", console.error);
 
-client.login(config.token).then((token) => console.log("Logged in successfully")).catch(error => {
+client.login(config.token).then((token) => {
+	console.log("Logged in successfully")
+	const app = express()
+	app.get('/',function(req, res) {
+		res.sendFile(__dirname + '/index.html')
+	})
+	app.listen(process.env.PORT || 80)
+}).catch(error => {
 	console.error(error)
 	process.exit(1)
 });
+
