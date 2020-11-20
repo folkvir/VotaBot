@@ -3,6 +3,8 @@ const config = require("./botconfig.js");
 const Poll = require("./poll.js");
 const Datastore = require('nedb');
 const express = require('express')
+const fs = require('fs')
+const path = require('path')
 
 
 const client = new Discord.Client();
@@ -40,7 +42,7 @@ const examplesEmbed = new Discord.RichEmbed()
 
 
 let database = new Datastore({
-	inMemoryOnly: true
+	filename: path.join(__dirname, "/db/database.txt")
 });
 database.loadDatabase();
 database.persistence.setAutocompactionInterval(3600000);
@@ -256,7 +258,26 @@ client.login(config.token).then((token) => {
 	app.get('/',function(req, res) {
 		res.sendFile(__dirname + '/index.html')
 	})
-	app.listen(process.env.PORT || 80)
+
+	try	{
+		console.log("Trying to load /etc/ssl_certs/[.key, .crt]...")
+		const options = {
+			key: fs.readFileSync('/etc/ssl_certs/server.key'),
+			cert: fs.readFileSync('/etc/ssl_certs/server.crt')
+		}
+		// running server on https
+		require('https').createServer(options, app).listen(443, () => {
+			console.log('Listening on incoming traffic on port 443')
+		})
+	} catch (error) {
+		console.error(e)
+	}
+	
+	// running server on http
+	require('http').createServer({}, app).listen(80, () => {
+		console.log('Listening on incoming traffic on port 80')
+	})
+	
 }).catch(error => {
 	console.error(error)
 	process.exit(1)
